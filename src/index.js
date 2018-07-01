@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import Routes from './routes';
 import registerServiceWorker from './registerServiceWorker';
 
+import 'semantic-ui-css/semantic.min.css';
+
 import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "react-apollo";
 
