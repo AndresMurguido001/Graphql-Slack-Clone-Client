@@ -11,6 +11,7 @@ import Home from './Home';
 import Register from './Register';
 import Login from './Login';
 import CreateTeams from './CreateTeams';
+import ViewTeam from './ViewTeam';
 
 
 const isAuthenticated = () => {
@@ -48,6 +49,7 @@ export default () => (
             <Route exact path = "/" component={ Home }/>
             <Route exact path = "/register" component={ Register }/>
             <Route exact path = "/login" component={ Login }/>
+            <Route exact path = "/viewTeam" component={ ViewTeam }/>
             <PrivateRoute exact path = "/createTeam" component={ CreateTeams }/>
         </Switch>
     </Router>
