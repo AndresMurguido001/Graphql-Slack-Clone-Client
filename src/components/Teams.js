@@ -7,18 +7,41 @@ const TeamWrap = styled.div`
     background-color: #362233;
     color: #958993;
 `;
+
+const TeamList = styled.ul`
+    width: 100%;
+    padding-left: 0;
+    list-style: none;
+`;
+const TeamListItem = styled.li`
+    height: 50px;
+    width: 50px;
+    background-color: #676066;
+    color: #fff;
+    margin: auto;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    border-radius: 11px;
+    &:hover {
+        border-style: solid;
+        border-width: thick;
+        border-color: #767676;
+    }
+`;
+
 const team = ({id, letter}) => (
-    <li key={`team-${id}`}>
+    <TeamListItem key={`team-${id}`}>
     {letter}
-    </li>
+    </TeamListItem>
 )
 
 export default ({teams}) => (
-    <TeamWrap>
-        <div>
-            <ul>
+    <TeamWrap>        
+            <TeamList>
             {teams.map(team)}
-            </ul>            
-        </div>
+            </TeamList>                    
     </TeamWrap>
 )

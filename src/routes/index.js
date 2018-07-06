@@ -49,7 +49,7 @@ export default () => (
             <Route exact path = "/" component={ Home }/>
             <Route exact path = "/register" component={ Register }/>
             <Route exact path = "/login" component={ Login }/>
-            <Route exact path = "/viewTeam" component={ ViewTeam }/>
+            <Route exact path = "/viewTeam/:teamId?/:channelId?" component={ ViewTeam }/>
             <PrivateRoute exact path = "/createTeam" component={ CreateTeams }/>
         </Switch>
     </Router>
