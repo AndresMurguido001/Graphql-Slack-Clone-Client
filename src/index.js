@@ -9,7 +9,7 @@ import ApolloClient from "apollo-client";
 import { ApolloProvider } from "react-apollo";
 import { setContext } from 'apollo-link-context';
 import { createHttpLink } from 'apollo-link-http';
-import { ApolloLink, from } from 'apollo-link';
+import { ApolloLink } from 'apollo-link';
 import { InMemoryCache } from 'apollo-cache-inmemory'
 //Middleware
 const httpLink = createHttpLink({ uri: "http://localhost:8080/graphql"});

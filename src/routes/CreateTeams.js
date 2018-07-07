@@ -1,7 +1,7 @@
 import React ,{ Component } from "react";
 import { observer } from "mobx-react";
 import { extendObservable } from "mobx";
-import { Container, Header, Form, Button, Divider, Label } from 'semantic-ui-react'
+import { Container, Header, Form, Button, Divider } from 'semantic-ui-react'
 import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
 import { Link } from 'react-router-dom';
@@ -9,8 +9,7 @@ import { Link } from 'react-router-dom';
 export default observer(class CreateTeam extends Component{
     constructor(props){
         super(props)
-        extendObservable(this, {
-            errors: {},
+        extendObservable(this, {            
             name: "",
         })        
     }    
@@ -19,17 +18,16 @@ export default observer(class CreateTeam extends Component{
         this[name] = value;
     }
     render(){
-        const { name,  errors: { nameError } } = this;
+        const { name } = this;
         return(           
             <Mutation mutation={createTeamMutation}>              
             {(createTeam, { loading, error }) => (                            
                 <Container text>                
-                <Form onSubmit={async (e) => {
-                    this.nameError = "";
+                <Form onSubmit={async (e) => {                    
                     e.preventDefault();
                     try {
                         await createTeam({ variables: { name }});
-                        this.props.history.push("/");
+                        this.props.history.push("/viewTeam");
                     } catch(error){                        
                         this.props.history.push("/login");                        
                     }                        

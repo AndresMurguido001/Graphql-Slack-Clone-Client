@@ -3,11 +3,20 @@ import { Button, Modal, Input, Form } from 'semantic-ui-react'
 import { withFormik } from 'formik';
 import gql from 'graphql-tag';
 import { graphql, compose } from 'react-apollo';
+import { allTeamsQuery } from '../graphql/team';
+import findIndex from 'lodash/findIndex'
+
 
 const createChannelMutation = gql`
     mutation($teamId: Int!, $name: String!){
-        createChannel(teamId: $teamId, name: $name)
-    }
+        createChannel(teamId: $teamId, name: $name){
+            ok
+            channel {
+                name
+                id
+            }            
+        }
+    }    
 `;
 
 const AddChannelModal = ({ 
@@ -37,7 +46,9 @@ const AddChannelModal = ({
 )
 
 export default compose(
-    graphql(createChannelMutation),
+    graphql(
+        createChannelMutation,        
+    ),
     withFormik({    
     mapPropsToValues: props => ({ name: '' }),
     // Submission handler
@@ -53,7 +64,34 @@ export default compose(
         }
         ) => {
             console.log(teamId);
-            await mutate({ variables: { teamId: teamId, name: values.name }});                                 
+            await mutate({
+                variables: {
+                    teamId: teamId,
+                    name: values.name 
+                },
+                optimisticResponse: {
+                    createChannel: {
+                        __typename: "Mutation",
+                        ok: true,
+                        channel: {
+                            __typename: "Channel",
+                            id: -1,
+                            name: values.name
+                        }                       
+                    }
+                },
+                update: (store, { data: { createChannel } }) => {
+                    const { ok, channel } = createChannel;
+                    if(!ok){
+                        return;
+                    }                    
+                    const data = store.readQuery({ query: allTeamsQuery });
+                    console.log(data);
+                    const teamIdx = findIndex(data.allTeams, ["id", teamId]);
+                    data.allTeams[teamIdx].channels.push(channel);
+                    store.writeQuery({ query: allTeamsQuery, data });
+                },
+            })                                                       
             onClose();
             setSubmitting(false);
         }
