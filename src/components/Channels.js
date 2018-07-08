@@ -43,7 +43,7 @@ const user = ({ id, name }) => (
         <Bubble />{name}
     </SideBarListItem>
 )
-export default ({ teamName, username, channels, users, onAddChannelClick, teamId }) => (
+export default ({ teamName, username, channels, users, onAddChannelClick, teamId, onInvitePeopleClick }) => (
     <ChannelWrapper>
         <SideBarPushLeft>
             <TeamNameHeader>{teamName}</TeamNameHeader>
@@ -61,6 +61,12 @@ export default ({ teamName, username, channels, users, onAddChannelClick, teamId
                 {users.map(user)}
             </SideBarList>
         </div>
+        <div>
+            <a href="#invite-people" onClick={onInvitePeopleClick}>
+            + Invite People
+            </a>
+        </div>
+        
 
     </ChannelWrapper>
 );

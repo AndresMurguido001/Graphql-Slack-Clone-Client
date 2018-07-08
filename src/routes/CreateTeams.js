@@ -11,6 +11,7 @@ export default observer(class CreateTeam extends Component{
         super(props)
         extendObservable(this, {            
             name: "",
+            errors: {}
         })        
     }    
     onChange = (e) => {
@@ -18,20 +19,29 @@ export default observer(class CreateTeam extends Component{
         this[name] = value;
     }
     render(){
-        const { name } = this;
+        const { name, errors: { nameError } } = this;
         return(           
             <Mutation mutation={createTeamMutation}>              
             {(createTeam, { loading, error }) => (                            
                 <Container text>                
                 <Form onSubmit={async (e) => {                    
-                    e.preventDefault();
+                    let response = null;
                     try {
-                        await createTeam({ variables: { name }});
-                        this.props.history.push("/viewTeam");
-                    } catch(error){                        
-                        this.props.history.push("/login");                        
+                        response = await createTeam({ variables: { name }});
+                    } catch(error){
+                        this.props.history.push('/login');
+                        return;         
                     }                        
-
+                const { ok, errors, team } = response.data.createTeam;
+                if (ok) {
+                    this.props.history.push(`/viewTeam/${team.id}`);
+                } else {
+                    const err = {};
+                    errors.forEach(({ path, message }) => {
+                        err[`${path}Error`] = message;
+                    });
+                    this.errors = err;
+                }
                     }}>         
                 <Link to="/">
                     <Button circular icon="home" style={{ float: "right" }} />
@@ -39,12 +49,14 @@ export default observer(class CreateTeam extends Component{
                 <Header as="h2">Create Team</Header>                    
                 <Divider section />                                               
                     <Form.Field>
-                    <Form.Input                         
+                    <Form.Input
+                        error={this.errors.nameError}                        
                         placeholder='Enter Team Name'
                         type='text' icon="users"
                         name="name" value={name} 
                         onChange={this.onChange} />                                                
-                    </Form.Field>                                                                                     
+                    </Form.Field> 
+                    {this.errors.nameError && <p>{this.errors.nameError}</p>}                                                                                    
                     <Button>
                         Create Your Team
                     </Button>
@@ -61,6 +73,9 @@ const createTeamMutation = gql`
 mutation($name: String!){
     createTeam(name: $name){
         ok
+        team {
+            id
+        }
         errors{
             path
             message
