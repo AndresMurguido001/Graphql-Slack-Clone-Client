@@ -1,7 +1,7 @@
 import React ,{ Component } from "react";
 import { observer } from "mobx-react";
 import { extendObservable } from "mobx";
-import { Container, Header, Form, Button, Divider } from 'semantic-ui-react'
+import { Container, Header, Form, Button, Divider, Message } from 'semantic-ui-react'
 import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
 import { Link } from 'react-router-dom';
@@ -20,6 +20,10 @@ export default observer(class CreateTeam extends Component{
     }
     render(){
         const { name, errors: { nameError } } = this;
+        const errList = [];
+        if (nameError){
+            errList.push(nameError);
+        }        
         return(           
             <Mutation mutation={createTeamMutation}>              
             {(createTeam, { loading, error }) => (                            
@@ -41,26 +45,28 @@ export default observer(class CreateTeam extends Component{
                         err[`${path}Error`] = message;
                     });
                     this.errors = err;
-                }
+                    
+                }                
                     }}>         
                 <Link to="/">
                     <Button circular icon="home" style={{ float: "right" }} />
                 </Link>            
                 <Header as="h2">Create Team</Header>                    
                 <Divider section />                                               
-                    <Form.Field>
+                    <Form.Field error={!!nameError}>
                     <Form.Input
-                        error={this.errors.nameError}                        
                         placeholder='Enter Team Name'
                         type='text' icon="users"
                         name="name" value={name} 
                         onChange={this.onChange} />                                                
                     </Form.Field> 
-                    {this.errors.nameError && <p>{this.errors.nameError}</p>}                                                                                    
                     <Button>
                         Create Your Team
                     </Button>
                 </Form>
+                {nameError ? (
+                <Message error header="There was some errors with your submission" list={errList} />
+                ) : null}
             </Container>
             )}                                          
             </Mutation>

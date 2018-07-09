@@ -63,7 +63,6 @@ export default compose(
             setSubmitting,      
         }
         ) => {
-            console.log(teamId);
             await mutate({
                 variables: {
                     teamId: teamId,
@@ -86,7 +85,6 @@ export default compose(
                         return;
                     }                    
                     const data = store.readQuery({ query: allTeamsQuery });
-                    console.log(data);
                     const teamIdx = findIndex(data.allTeams, ["id", teamId]);
                     data.allTeams[teamIdx].channels.push(channel);
                     store.writeQuery({ query: allTeamsQuery, data });

@@ -4,7 +4,15 @@ export const allTeamsQuery = gql`
 {   
     allTeams{
         id
-        name
+        name         
+        channels{
+            name
+            id
+        }
+    }
+    invitedToTeams {
+        id
+        name        
         channels{
             name
             id
