@@ -1,10 +1,10 @@
 import React from "react";
-import Message from '../components/Messages';
 import SendMessage from '../components/SendMessage';
 import AppLayout from '../components/AppLayout';
 import Header from '../components/Header';
-import Sidebar from "../containers/Sidebar";
 import findIndex from "lodash/findIndex";
+import Sidebar from "../containers/Sidebar";
+import MessageContainer from "../containers/MessageContainer";
 import { Redirect } from 'react-router-dom';
 
 import { allTeamsQuery } from '../graphql/team';
@@ -16,7 +16,6 @@ const ViewTeam = ({ match: { params: { teamId, channelId } }}) => (
         {({ loading, error, data: { allTeams, invitedToTeams } }) => {        
             if (loading) return "Loading...";
             if (error) return `Error! ${error.message}`;
-            console.log(invitedToTeams);
             const teams = [...allTeams, ...invitedToTeams ]
             if(!teams.length){
                 return(<Redirect to="/createTeam" />)
@@ -38,13 +37,8 @@ const ViewTeam = ({ match: { params: { teamId, channelId } }}) => (
                                 team={team}
                                 />      
                 { currentChannel && <Header channelName={currentChannel.name} /> }
-                {currentChannel && <Message channelId={currentChannel.id} >
-                    <ul className="message-list">            
-                    <li></li>
-                    <li></li>
-                    </ul>
-                </Message> }
-                {currentChannel && <SendMessage channelName={currentChannel.name}>
+                {currentChannel && (<MessageContainer channelId={currentChannel.id} />)}
+                {currentChannel && <SendMessage channelName={currentChannel.name} channelId={currentChannel.id}>
                     <input type="text" placeholde="CSS grid layout module"/>
                 </SendMessage> }
             </AppLayout>
