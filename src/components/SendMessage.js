@@ -40,18 +40,8 @@ const SendMessage = ({
 export default compose(
     graphql(createMessageMutation),
     withFormik({
-    mapPropsToValues: props => ({ message: '' }),
-    handleSubmit: async (
-        values,        
-        {
-        props: {
-                channelId,
-                mutate,
-            },
-            resetForm,
-            setSubmitting      
-        }
-        ) => {
+    mapPropsToValues: () => ({ message: '' }),
+    handleSubmit: async ( values, { props: { channelId, mutate }, resetForm, setSubmitting }) => {
             if (!values.message || !values.message.trim()){
                 setSubmitting(false);
                 return;
@@ -63,5 +53,6 @@ export default compose(
                 },                
             })                                                       
             resetForm(false);
-        }
-}))(SendMessage)
+        },
+    }),
+)(SendMessage)

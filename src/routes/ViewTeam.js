@@ -38,9 +38,7 @@ const ViewTeam = ({ match: { params: { teamId, channelId } }}) => (
                                 />      
                 { currentChannel && <Header channelName={currentChannel.name} /> }
                 {currentChannel && (<MessageContainer channelId={currentChannel.id} />)}
-                {currentChannel && <SendMessage channelName={currentChannel.name} channelId={currentChannel.id}>
-                    <input type="text" placeholde="CSS grid layout module"/>
-                </SendMessage> }
+                {currentChannel && (<SendMessage channelName={currentChannel.name} channelId={currentChannel.id} />)}
             </AppLayout>
                 )        
         }}
