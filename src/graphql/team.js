@@ -1,23 +1,18 @@
 import gql from "graphql-tag"
 
-export const allTeamsQuery = gql`
+export const meQuery = gql`
 {   
-    allTeams{
+    me {
+    username
+    id
+    teams{
         id
-        name
-        owner         
-        channels{
-            name
-            id
-        }
-    }
-    invitedToTeams {
-        id
-        name
-        owner      
-        channels{
-            name
-            id
+        admin
+        name         
+            channels{
+                name
+                id
+            }
         }
     }
 }
