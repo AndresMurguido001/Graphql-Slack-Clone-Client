@@ -1,19 +1,23 @@
-import gql from "graphql-tag"
+import gql from "graphql-tag";
 
 export const meQuery = gql`
-{   
+  {
     me {
-    username
-    id
-    teams{
+      username
+      id
+      teams {
         id
         admin
-        name         
-            channels{
-                name
-                id
-            }
+        directMessageMembers {
+          id
+          username
         }
+        name
+        channels {
+          name
+          id
+        }
+      }
     }
-}
+  }
 `;

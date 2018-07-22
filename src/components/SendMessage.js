@@ -2,8 +2,6 @@ import styled from "styled-components";
 import React from "react";
 import { Input } from "semantic-ui-react";
 import { withFormik } from "formik";
-import gql from "../../node_modules/graphql-tag";
-import { graphql, compose } from "react-apollo";
 
 const MessageWrapper = styled.div`
   grid-column: 3;
@@ -13,8 +11,6 @@ const MessageWrapper = styled.div`
 
 const SendMessage = ({
   placeholder,
-  open,
-  onClose,
   values,
   handleChange,
   handleBlur,

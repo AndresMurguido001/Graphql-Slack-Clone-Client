@@ -38,7 +38,6 @@ const ViewTeam = ({
     : 0;
   const channel =
     channelIdx === -1 ? team.channels[0] : team.channels[channelIdx];
-
   return (
     <AppLayout>
       <Sidebar
