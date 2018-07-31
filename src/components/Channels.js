@@ -47,8 +47,8 @@ const Bubble = ({ on = true }) =>
       <Icon className="circle outline" />
     </Green>
   ) : (
-    <Icon className="circle outline" />
-  );
+      <Icon className="circle outline" />
+    );
 const channel = ({ id, name }, teamId) => (
   <Link key={`channel-${id}`} to={`/viewTeam/${teamId}/${id}`}>
     <SideBarListItem> # {name}</SideBarListItem>
@@ -74,35 +74,35 @@ export default ({
   onInvitePeopleClick,
   isOwner
 }) => (
-  <ChannelWrapper>
-    <SideBarPushLeft>
-      <TeamNameHeader>{teamName}</TeamNameHeader>
-      {username}
-    </SideBarPushLeft>
-    <div>
-      <SideBarList>
-        <SideBarListHeader>
-          Channels{" "}
-          {isOwner && <Icon onClick={onAddChannelClick} name="add circle" />}
-        </SideBarListHeader>
-        {channels.map(c => channel(c, teamId))}
-      </SideBarList>
-    </div>
-    <div>
-      <SideBarList>
-        <SideBarListHeader>
-          Direct Messages{" "}
-          <Icon onClick={onDirectMessageClick} name="add circle" />
-        </SideBarListHeader>
-        {users.map(u => user(u, teamId))}
-      </SideBarList>
-    </div>
-    {isOwner && (
+    <ChannelWrapper>
+      <SideBarPushLeft>
+        <TeamNameHeader>{teamName}</TeamNameHeader>
+        {username}
+      </SideBarPushLeft>
       <div>
-        <a href="#invite-people" onClick={onInvitePeopleClick}>
-          + Invite People
-        </a>
+        <SideBarList>
+          <SideBarListHeader>
+            Channels{" "}
+            {isOwner && <Icon onClick={onAddChannelClick} name="add circle" />}
+          </SideBarListHeader>
+          {channels.map(c => channel(c, teamId))}
+        </SideBarList>
       </div>
-    )}
-  </ChannelWrapper>
-);
+      <div>
+        <SideBarList>
+          <SideBarListHeader>
+            Direct Messages{" "}
+            <Icon onClick={onDirectMessageClick} name="add circle" />
+          </SideBarListHeader>
+          {users.map(u => user(u, teamId))}
+        </SideBarList>
+      </div>
+      {isOwner && (
+        <div>
+          <a href="#invite-people" onClick={onInvitePeopleClick}>
+            + Invite People
+        </a>
+        </div>
+      )}
+    </ChannelWrapper>
+  );

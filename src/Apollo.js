@@ -1,6 +1,7 @@
 import ApolloClient from "apollo-client";
 import { setContext } from "apollo-link-context";
-import { createHttpLink } from "apollo-link-http";
+// import { createHttpLink } from "apollo-link-http";
+import createFileLink from '../src/createFileLink'
 import { ApolloLink, split } from "apollo-link";
 import { InMemoryCache } from "apollo-cache-inmemory";
 //Subscriptions Setup... Including(^ Httplink, split);
@@ -11,14 +12,14 @@ const wsLink = new WebSocketLink({
   uri: `ws://localhost:8080/subscriptions`,
   options: {
     reconnect: true,
-    connectionParams: {
+    connectionParams: () => ({
       token: localStorage.getItem("token"),
       refreshToken: localStorage.getItem("refreshToken")
-    }
+    }),
   }
 });
 //Middleware
-const httpLink = createHttpLink({ uri: "http://localhost:8080/graphql" });
+const httpLink = createFileLink({ uri: "http://localhost:8080/graphql" });
 
 const middlewareLink = setContext(() => ({
   headers: {

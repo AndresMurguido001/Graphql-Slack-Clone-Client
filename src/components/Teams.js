@@ -33,19 +33,24 @@ const TeamListItem = styled.li`
     }
 `;
 
-const team = ({id, letter}) => (
+const team = ({ id, letter }) => (
     <Link key={`team-${id}`} to={`/viewTeam/${id}/`}>
         <TeamListItem>
             {letter}
         </TeamListItem>
     </Link>
-    
+
 )
 
-export default ({teams}) => (
-    <TeamWrap>        
-            <TeamList>
+export default ({ teams }) => (
+    <TeamWrap>
+        <TeamList>
             {teams.map(team)}
-            </TeamList>                    
+            <Link key={`add-team`} to={`/createTeam`}>
+                <TeamListItem>
+                    +
+                </TeamListItem>
+            </Link>
+        </TeamList>
     </TeamWrap>
 )

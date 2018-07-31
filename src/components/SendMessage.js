@@ -1,12 +1,15 @@
 import styled from "styled-components";
 import React from "react";
-import { Input } from "semantic-ui-react";
+import { Button, Icon, Input } from "semantic-ui-react";
 import { withFormik } from "formik";
+import FileUploads from './FileUpload'
 
 const MessageWrapper = styled.div`
   grid-column: 3;
   grid-row: 3;
   margin: 20px;
+  display: grid;
+  grid-template-columns: 40px auto;
 `;
 
 const SendMessage = ({
@@ -17,22 +20,26 @@ const SendMessage = ({
   handleSubmit,
   isSubmitting
 }) => (
-  <MessageWrapper>
-    <Input
-      name="message"
-      value={values.message}
-      onChange={handleChange}
-      onBlur={handleBlur}
-      onKeyDown={e => {
-        if (e.keyCode === 13 && !isSubmitting) {
-          handleSubmit(e);
-        }
-      }}
-      fluid
-      placeholder={`Message # ${placeholder}`}
-    />
-  </MessageWrapper>
-);
+    <MessageWrapper>
+      <FileUploads>
+        <Button icon>
+          <Icon name="plus circle" />
+        </Button>
+      </FileUploads>
+      <Input
+        name="message"
+        value={values.message}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        onKeyDown={e => {
+          if (e.keyCode === 13 && !isSubmitting) {
+            handleSubmit(e);
+          }
+        }}
+        placeholder={`Message # ${placeholder}`}
+      />
+    </MessageWrapper>
+  );
 
 export default withFormik({
   mapPropsToValues: () => ({ message: "" }),

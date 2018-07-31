@@ -18,68 +18,73 @@ mutation($email: String!, $teamId: Int!){
 }  
 `;
 
-const InvitePeopleModal = ({ 
-    open, 
-    onClose,  
-    values,  
+const InvitePeopleModal = ({
+    open,
+    onClose,
+    values,
     handleChange,
     handleBlur,
     handleSubmit,
     isSubmitting,
     touched,
     errors,
-    }) => (
-<Modal onClose={onClose} open={open}>
-    <Modal.Header>Add Team Member</Modal.Header>        
-        <Modal.Content>
-        <Form>        
-        <Form.Field>
-            <Input fluid values={values.email} onChange={handleChange} onBlur={handleBlur} label='#' name="email" placeholder='Add Someone to your team' />
-        </Form.Field>
-        {touched.email && errors.email && <div><p>{errors.email}</p></div>}
-        <Form.Field>        
-            <Form.Group widths="equal">
-            <Button disabled={isSubmitting} onClick={handleSubmit} fluid content='Submit' />              
-            <Button disabled={isSubmitting} onClick={onClose} fluid content='Cancel' />   
-            </Form.Group>
-        </Form.Field>
-        </Form>
-    </Modal.Content>             
-</Modal>
-)
+}) => (
+        <Modal onClose={onClose} open={open}>
+            <Modal.Header>Add Team Member</Modal.Header>
+            <Modal.Content>
+                <Form>
+                    <Form.Field>
+                        <Input fluid values={values.email} onChange={handleChange} onBlur={handleBlur} label='#' name="email" placeholder='Add Someone to your team' />
+                    </Form.Field>
+                    {touched.email && errors.email && <div><p>{errors.email}</p></div>}
+                    <Form.Field>
+                        <Form.Group widths="equal">
+                            <Button disabled={isSubmitting} type="submit" onClick={handleSubmit} fluid content='Submit' />
+                            <Button disabled={isSubmitting} type="button" onClick={onClose} fluid content='Cancel' />
+                        </Form.Group>
+                    </Form.Field>
+                </Form>
+            </Modal.Content>
+        </Modal>
+    )
 
 export default compose(
     graphql(
-        addTeamMemberMutation,        
+        addTeamMemberMutation,
     ),
-    withFormik({    
-    mapPropsToValues: props => ({ email: '' }),
-    // Submission handler
-    handleSubmit: async (
-        values,        
-        {
-        props: {
-                teamId,
-                mutate,
-                onClose,
-            },
-            setSubmitting,
-            setErrors      
-        }
+    withFormik({
+        mapPropsToValues: props => ({ email: '' }),
+        // Submission handler
+        handleSubmit: async (
+            values,
+            {
+                props: {
+                    teamId,
+                    mutate,
+                    onClose,
+                },
+                setSubmitting,
+                setErrors
+            }
         ) => {
             const response = await mutate({
                 variables: {
                     teamId: teamId,
-                    email: values.email 
-                },           
+                    email: values.email
+                },
             })
             const { ok, errors } = response.data.addTeamMember;
-            if (ok){
+            if (ok) {
                 onClose();
                 setSubmitting(false);
             } else {
                 setSubmitting(false);
-                setErrors(normalizeErrors(errors));
-            }           
+                setErrors(normalizeErrors(errors.map(e =>
+                    e.message === "user_id must be unique" ? ({
+                        path: "email",
+                        message: "This user is already part of your team"
+                    }) : e
+                )));
+            }
         }
     }))(InvitePeopleModal);
