@@ -93,7 +93,6 @@ class MessageContainer extends React.Component {
         overflowY: "auto",
       }} channelId={channelId} disableClick>
         <Comment.Group>
-          {console.log(messages)}
           {messages.map(m => (
             <Comment key={`${m.id}-message`}>
               <Comment.Content>

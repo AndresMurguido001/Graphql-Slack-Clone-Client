@@ -35,7 +35,7 @@ const afterwareLink = new ApolloLink((operation, forward) => {
     } = context;
     if (headers) {
       const token = headers.get("x-token");
-      const refreshToken = headers.get("x-refresh-token");
+      const refreshToken = headers.get("x-refreshToken");
       if (token) {
         localStorage.setItem("token", token);
       }
