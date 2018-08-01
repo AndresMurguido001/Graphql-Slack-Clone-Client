@@ -16,6 +16,7 @@ export const meQuery = gql`
         channels {
           name
           id
+          dm
         }
       }
     }

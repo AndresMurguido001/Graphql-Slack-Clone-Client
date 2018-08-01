@@ -30,7 +30,8 @@ const AddChannelModal = ({
     isSubmitting,
     resetForm,
     setFieldValue,
-    teamId
+    teamId,
+    currentUserId
 }) => (
         <Modal onClose={(e) => {
             resetForm()
@@ -51,7 +52,7 @@ const AddChannelModal = ({
                         />
                     </Form.Field>
                     {values.public ? null : (<Form.Field>
-                        <MultiSelectUsers value={values.members} handleChange={(e, { value }) => setFieldValue("members", value)} teamId={teamId} placeholder="Choose members" />
+                        <MultiSelectUsers currentUserId={currentUserId} value={values.members} handleChange={(e, { value }) => setFieldValue("members", value)} teamId={teamId} placeholder="Choose members" />
                     </Form.Field>)}
                     <Form.Field>
                         <Form.Group widths="equal">
