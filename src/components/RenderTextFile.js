@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider } from '../../node_modules/semantic-ui-react';
+import { Divider } from 'semantic-ui-react';
 
 export default class RenderTextFile extends React.Component {
     state = {
@@ -14,9 +14,9 @@ export default class RenderTextFile extends React.Component {
         const { text } = this.state
         return (
             <div>
-                <div>--------------</div>
+                <Divider />
                 <p>{text}</p>
-                <div>--------------</div>
+                <Divider />
             </div>
         );
     }

@@ -41,17 +41,35 @@ const Message = ({ message: { url, text, filetype } }) => {
 };
 
 class MessageContainer extends React.Component {
+  state = {
+    hasMoreItems: true
+  }
   UNSAFE_componentWillMount() {
     this.unsubscribe = this.subscribe(this.props.channelId);
   }
 
-  UNSAFE_componentWillReceiveProps({ channelId }) {
+  UNSAFE_componentWillReceiveProps({ data: { messages }, channelId }) {
     let currentChannel = this.props.channelId;
     if (currentChannel !== channelId) {
       if (this.unsubscribe) {
         this.unsubscribe();
       }
       this.unsubscribe = this.subscribe(channelId);
+    }
+
+    if (this.scroller &&
+      this.scroller.scrollTop < 100 &&
+      this.props.data.messages &&
+      messages &&
+      this.props.data.messages.length !== messages.length) {
+      //currently 35
+      const heightBeforeRender = this.scroller.scrollHeight
+      //wait for 70 items to render
+      setTimeout(() => {
+        if (this.scroller) {
+          this.scroller.scrollTop = this.scroller.scrollHeight - heightBeforeRender
+        }
+      }, 120)
     }
   }
 
@@ -72,50 +90,91 @@ class MessageContainer extends React.Component {
         }
         return {
           ...prev,
-          messages: [...prev.messages, subscriptionData.data.newChannelMessage]
+          messages: [subscriptionData.data.newChannelMessage, ...prev.messages]
         };
       }
     });
+
+  handleScroll = () => {
+    const { data: { messages, fetchMore }, channelId } = this.props;
+    if (
+      this.scroller &&
+      this.scroller.scrollTop === 0 &&
+      this.state.hasMoreItems &&
+      messages.length >= 35
+    ) {
+      fetchMore({
+        variables: {
+          channelId,
+          cursor: messages[messages.length - 1].created_at,
+        },
+        updateQuery: (previousResult, { fetchMoreResult }) => {
+          if (!fetchMoreResult) {
+            return previousResult;
+          }
+
+          if (fetchMoreResult.messages.length < 35) {
+            this.setState({ hasMoreItems: false });
+          }
+
+          return {
+            ...previousResult,
+            messages: [...previousResult.messages, ...fetchMoreResult.messages],
+          };
+        },
+      });
+    }
+  };
 
   render() {
     const {
       data: { loading, messages },
       channelId
     } = this.props;
+
     return loading ? null : (
-      <FileUpload style={{
+      <div style={{
         gridColumn: 3,
         gridRow: 2,
         paddingLeft: "20px",
         paddingRight: "20px",
+        overflowY: "auto",
         display: "flex",
         flexDirection: "column-reverse",
-        overflowY: "auto",
-      }} channelId={channelId} disableClick>
-        <Comment.Group>
-          {messages.map(m => (
-            <Comment key={`${m.id}-message`}>
-              <Comment.Content>
-                <Comment.Author as="a">{m.user.username}</Comment.Author>
-                <Comment.Metadata>
-                  <div>{m.created_at}</div>
-                </Comment.Metadata>
-                <Message message={m} />
-                <Comment.Actions>
-                  <Comment.Action>Reply</Comment.Action>
-                </Comment.Actions>
-              </Comment.Content>
-            </Comment>
-          ))}
-        </Comment.Group>
-      </FileUpload>
+      }}
+        onScroll={this.handleScroll}
+        ref={(scroller) => {
+          this.scroller = scroller
+        }}
+      >
+        <FileUpload style={{
+
+        }} channelId={channelId} disableClick>
+          <Comment.Group>
+            {[...messages].reverse().map(m => (
+              <Comment key={`${m.id}-message`}>
+                <Comment.Content>
+                  <Comment.Author as="a">{m.user.username}</Comment.Author>
+                  <Comment.Metadata>
+                    <div>{m.created_at}</div>
+                  </Comment.Metadata>
+                  <Message message={m} />
+                  <Comment.Actions>
+                    <Comment.Action>Reply</Comment.Action>
+                  </Comment.Actions>
+                </Comment.Content>
+              </Comment>
+            ))}
+          </Comment.Group>
+        </FileUpload>
+      </div>
     );
   }
 }
 
 const messagesQuery = gql`
-  query($channelId: Int!) {
-    messages(channelId: $channelId) {
+  query($cursor: String, $channelId: Int!) {
+    messages(cursor: $cursor, channelId: $channelId) {
       id
       text
       user {
@@ -129,8 +188,10 @@ const messagesQuery = gql`
 `;
 
 export default graphql(messagesQuery, {
-  variables: props => ({
-    channelId: props.channelId
+  options: (props) => ({
+    // fetchPolicy: "network-only",
+    variables: {
+      channelId: props.channelId,
+    },
   }),
-  fetchPolicy: "network-only"
 })(MessageContainer);

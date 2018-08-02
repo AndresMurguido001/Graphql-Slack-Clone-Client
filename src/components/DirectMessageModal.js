@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Modal, Input, Form } from "semantic-ui-react";
+import { Button, Modal, Form } from "semantic-ui-react";
 import { graphql, compose } from "react-apollo";
 import { withRouter } from "react-router-dom";
 import MultiSelectUsers from './MultiSelectUsers'
@@ -20,7 +20,7 @@ const DirectMessageModal = ({
   isSubmitting,
   setFieldValue,
   currentUserId,
-  resetForm
+  resetForm,
 }) => (
     <Modal onClose={onClose} open={open}>
       <Modal.Header>Direct Messaging</Modal.Header>
@@ -66,16 +66,15 @@ export default compose(
           teamId,
           onClose,
           mutate,
+          history,
         },
-        history,
-        resetForm
+
       }
     ) => {
-      const response = await mutate({
+      await mutate({
         variables: { members, teamId },
         update: (store, { data: { getOrCreateChannel } }) => {
           const { id, name } = getOrCreateChannel;
-
           const data = store.readQuery({ query: meQuery });
           const teamIdx = findIndex(data.me.teams, ["id", teamId]);
 
@@ -89,12 +88,13 @@ export default compose(
             });
             store.writeQuery({ query: meQuery, data });
           }
-          // history.push(`/viewTeam/${teamId}/${id}`)
+          onClose()
+          history.push(`/viewTeam/${teamId}/${id}`)
         },
       }
-      )
-      onClose();
-      resetForm();
+      );
+
+      // console.log(response);
     }
   })
 

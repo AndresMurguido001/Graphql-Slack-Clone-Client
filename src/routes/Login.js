@@ -5,6 +5,7 @@ import { Container, Header, Form, Button, Divider, Label } from 'semantic-ui-rea
 import gql from "graphql-tag";
 import { Mutation } from "react-apollo";
 import { Link } from 'react-router-dom';
+import { wsLink } from '../Apollo'
 
 export default observer(class Login extends Component {
     constructor(props) {
@@ -35,6 +36,7 @@ export default observer(class Login extends Component {
                                     if (ok) {
                                         localStorage.setItem("token", token);
                                         localStorage.setItem("refreshToken", refreshToken);
+                                        wsLink.subscriptionClient.tryReconnect();
                                         this.props.history.push("/viewTeam");
                                     }
                                     if (errors) {

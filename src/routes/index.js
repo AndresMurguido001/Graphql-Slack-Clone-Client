@@ -18,7 +18,10 @@ const isAuthenticated = () => {
   const refreshToken = localStorage.getItem("refreshToken");
   try {
     jwt_decode(token);
-    jwt_decode(refreshToken);
+    const { exp } = jwt_decode(refreshToken);
+    if (Date.now() / 1000 > exp) {
+      return false;
+    }
   } catch (err) {
     return false;
   }
