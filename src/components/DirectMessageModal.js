@@ -4,6 +4,9 @@ import { graphql, compose } from "react-apollo";
 import { withRouter } from "react-router-dom";
 import MultiSelectUsers from './MultiSelectUsers'
 import { withFormik } from "../../node_modules/formik";
+import { meQuery } from '../graphql/team';
+import findIndex from 'lodash/findIndex'
+
 import gql from 'graphql-tag'
 
 // Add Style to dropdown (DOWNSHIFT) component to look more like slack
@@ -15,13 +18,12 @@ const DirectMessageModal = ({
   values,
   handleSubmit,
   isSubmitting,
-  resetForm,
   setFieldValue,
   currentUserId,
-
+  resetForm
 }) => (
     <Modal onClose={onClose} open={open}>
-      <Modal.Header>Add Channel</Modal.Header>
+      <Modal.Header>Direct Messaging</Modal.Header>
       <Modal.Content>
         <Form>
           <Form.Field>
@@ -43,7 +45,10 @@ const DirectMessageModal = ({
 
 const getOrCreateChannelMutation = gql`
     mutation($members: [Int!]!, $teamId: Int!){
-      getOrCreateChannel(members: $members, teamId: $teamId)
+      getOrCreateChannel(members: $members, teamId: $teamId) {
+        id
+        name
+      }
     }
   `;
 
@@ -62,13 +67,34 @@ export default compose(
           onClose,
           mutate,
         },
-        setSubmitting,
+        history,
+        resetForm
       }
     ) => {
-      const response = await mutate({ variables: { members, teamId } })
-      console.log(response);
+      const response = await mutate({
+        variables: { members, teamId },
+        update: (store, { data: { getOrCreateChannel } }) => {
+          const { id, name } = getOrCreateChannel;
+
+          const data = store.readQuery({ query: meQuery });
+          const teamIdx = findIndex(data.me.teams, ["id", teamId]);
+
+          const notInChannelList = data.me.teams[teamIdx].channels.every(c => c.id !== id)
+          if (notInChannelList) {
+            data.me.teams[teamIdx].channels.push({
+              __typename: "Channel",
+              id,
+              name,
+              dm: true
+            });
+            store.writeQuery({ query: meQuery, data });
+          }
+          // history.push(`/viewTeam/${teamId}/${id}`)
+        },
+      }
+      )
       onClose();
-      setSubmitting(false);
+      resetForm();
     }
   })
 

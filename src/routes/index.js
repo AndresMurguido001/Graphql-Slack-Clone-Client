@@ -12,7 +12,6 @@ import Register from "./Register";
 import Login from "./Login";
 import CreateTeams from "./CreateTeams";
 import ViewTeam from "./ViewTeam";
-import DirectMessages from "./DirectMessages";
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("token");
@@ -33,12 +32,12 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
       isAuthenticated() ? (
         <Component {...props} />
       ) : (
-        <Redirect
-          to={{
-            pathname: "/login"
-          }}
-        />
-      )
+          <Redirect
+            to={{
+              pathname: "/login"
+            }}
+          />
+        )
     }
   />
 );
@@ -49,11 +48,7 @@ export default () => (
       <Route exact path="/" component={Home} />
       <Route exact path="/register" component={Register} />
       <Route exact path="/login" component={Login} />
-      <PrivateRoute
-        exact
-        path="/viewTeam/user/:teamId/:userId"
-        component={DirectMessages}
-      />
+
       <PrivateRoute
         exact
         path="/viewTeam/:teamId?/:channelId?"
